@@ -1,15 +1,23 @@
+#[cfg(feature = "gui")]
 mod archguard;
+#[cfg(feature = "gui")]
 mod ecs;
+#[cfg(feature = "gui")]
 mod evolution;
+#[cfg(feature = "gui")]
 mod lighting;
+#[cfg(feature = "gui")]
 mod renderer;
+#[cfg(feature = "gui")]
 mod ui;
+#[cfg(feature = "gui")]
 mod voxel;
 
-use eframe::egui;
-use ui::EngineUI;
-
+#[cfg(feature = "gui")]
 fn main() -> Result<(), eframe::Error> {
+    use eframe::egui;
+    use ui::EngineUI;
+    
     env_logger::init();
 
     let options = eframe::NativeOptions {
@@ -26,4 +34,9 @@ fn main() -> Result<(), eframe::Error> {
             Ok(Box::new(EngineUI::new()))
         }),
     )
+}
+
+#[cfg(not(feature = "gui"))]
+fn main() {
+    println!("GUI feature not enabled. Run 'cargo run --bin test-components' to test core components.");
 }

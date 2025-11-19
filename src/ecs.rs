@@ -25,13 +25,13 @@ pub mod systems {
     }
     
     /// System to update voxel energy
-    pub fn update_voxel_energy(mut query: Query<&mut Voxel>, time: Res<Time>) {
+    pub fn update_voxel_energy(mut query: Query<&mut Voxel>, delta_time: f32) {
         for mut voxel in query.iter_mut() {
             // Energy decays over time
             voxel.energy *= 0.999;
             
             // Energy increases with resonance
-            voxel.energy += voxel.resonance.to_f32() as f64 * time.delta_secs() as f64;
+            voxel.energy += voxel.resonance.to_f32() as f64 * delta_time as f64;
         }
     }
 }

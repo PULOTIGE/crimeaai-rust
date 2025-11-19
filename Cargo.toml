@@ -14,26 +14,26 @@ panic = "abort"
 strip = true
 
 [dependencies]
-# Graphics & Rendering
-wgpu = { version = "0.19", features = ["spirv", "glsl"] }
-bytemuck = "1.14"
-raw-window-handle = "0.6"
-winit = "0.29"
-pollster = "0.3"
+# Graphics & Rendering (optional for GUI)
+# wgpu = "0.19"
+# bytemuck = "1.14"
+# raw-window-handle = "0.5"
+# winit = "0.28"
+# pollster = "0.3"
 env_logger = "0.11"
 
 # ECS
 bevy_ecs = "0.13"
 bevy_utils = "0.13"
 
-# UI
-eframe = { version = "0.27", default-features = false, features = ["default_fonts", "glow"] }
-egui = "0.27"
-egui-wgpu = "0.27"
+# UI (optional for GUI)
+# eframe = { version = "0.24", default-features = false, features = ["default_fonts", "glow"] }
+# egui = "0.24"
+# egui-wgpu = "0.24"
 
 # Math & Utilities
-glam = "0.27"
-nalgebra = "0.33"
+glam = "0.24"
+nalgebra = "0.32"
 half = "2.3"
 num-traits = "0.2"
 serde = { version = "1.0", features = ["derive"] }
@@ -47,7 +47,6 @@ futures = "0.3"
 prometheus = "0.13"
 parking_lot = "0.12"
 dashmap = "5.5"
-atomic-float = "0.1"
 
 # HIP/ROCm (optional, for AMD Vega 20 fallback)
 # rocm-smi = "0.1" # Uncomment if needed
@@ -72,3 +71,7 @@ criterion = "0.5"
 [[bin]]
 name = "adaptive-entity-engine"
 path = "src/main.rs"
+
+[[bin]]
+name = "test-components"
+path = "src/test_components.rs"

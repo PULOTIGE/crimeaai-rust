@@ -3,7 +3,7 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 /// NextGen Evolution: combine + mutate + fitness
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone)]
 pub struct EvolutionEngine {
     pub mutation_rate: f64,
     pub crossover_rate: f64,

@@ -148,6 +148,11 @@ impl ArchGuard {
         *self.empathy_ratio_value.read().await
     }
     
+    /// Check if circuit breaker is open
+    pub fn is_circuit_open(&self) -> bool {
+        self.circuit_open.load(Ordering::Acquire)
+    }
+    
     /// Update rhythm detector
     pub fn update_rhythm(&mut self, timestamp: f64) {
         self.rhythm_detector.update(timestamp);

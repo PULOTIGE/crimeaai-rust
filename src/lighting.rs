@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 /// LightPattern: exactly 1000 bytes
 #[repr(C, packed)]
-#[derive(Clone, Copy, Serialize, Deserialize)]
+#[derive(Clone, Copy)]
 pub struct LightPattern {
     // Direct/indirect f16 (4 bytes)
     pub direct_light: f16,
@@ -62,7 +62,7 @@ impl LightPattern {
         }
     }
     
-    pub fn calculate_lighting(&self, normal: [f32; 3], view_dir: [f32; 3]) -> f32 {
+    pub fn calculate_lighting(&self, normal: [f32; 3], _view_dir: [f32; 3]) -> f32 {
         // Simple lighting calculation using direct + indirect + SH
         let direct = self.direct_light.to_f32();
         let indirect = self.indirect_light.to_f32();

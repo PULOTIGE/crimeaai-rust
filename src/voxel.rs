@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 /// Voxel component: 9-13 KB per voxel
-#[derive(Component, Clone, Serialize, Deserialize)]
+#[derive(Component, Clone)]
 pub struct Voxel {
     // FP64 for energy/emotions (8 bytes)
     pub energy: f64,
@@ -114,7 +114,7 @@ impl Voxel {
 }
 
 /// Genome: up to 10 concepts (strings)
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone)]
 pub struct Genome {
     pub concepts: Vec<String>,
     pub max_concepts: usize,
@@ -153,7 +153,7 @@ pub struct VoxelWorld {
 
 impl VoxelWorld {
     pub fn new() -> Self {
-        let mut world = World::new();
+        let world = World::new();
         let voxels = Vec::new();
         
         Self {
@@ -165,46 +165,61 @@ impl VoxelWorld {
     }
     
     pub fn add_voxel(&mut self, position: [i32; 3]) -> Entity {
-        let entity = self.world.spawn(Voxel::new(position));
+        let entity = self.world.spawn(Voxel::new(position)).id();
         self.voxels.push(entity);
         entity
     }
     
     pub fn update(&mut self, delta_time: f32) {
         // Update voxel physics and evolution
-        let mut query = self.world.query::<&mut Voxel>();
-        for mut voxel in query.iter_mut(&mut self.world) {
-            // Update physics
-            voxel.position[0] += voxel.velocity_x as i32;
-            voxel.position[1] += voxel.velocity_y as i32;
-            voxel.position[2] += voxel.velocity_z as i32;
-            
-            // Update energy based on resonance
-            voxel.energy += voxel.resonance.to_f32() as f64 * delta_time as f64;
-            
-            // Apply trauma mode intensity
-            if self.trauma_mode {
-                voxel.energy *= 1.5;
-                voxel.emotion_arousal *= 1.3;
+        // Use entity IDs to avoid borrowing issues
+        for &entity in &self.voxels.clone() {
+            if let Some(mut voxel) = self.world.get_mut::<Voxel>(entity) {
+                // Update physics
+                voxel.position[0] += voxel.velocity_x as i32;
+                voxel.position[1] += voxel.velocity_y as i32;
+                voxel.position[2] += voxel.velocity_z as i32;
+                
+                // Update energy based on resonance
+                voxel.energy += voxel.resonance.to_f32() as f64 * delta_time as f64;
+                
+                // Apply trauma mode intensity
+                if self.trauma_mode {
+                    voxel.energy *= 1.5;
+                    voxel.emotion_arousal *= 1.3;
+                }
             }
         }
     }
     
     pub fn get_point_cloud_data(&self) -> Vec<([f32; 3], [f32; 3])> {
         let mut points = Vec::new();
-        let query = self.world.query::<&Voxel>();
         
-        let max_energy = query.iter(&self.world)
-            .map(|v| v.energy)
+        // Collect voxel data first to avoid borrowing issues
+        // Note: bevy_ecs query requires mutable world, so we use entity IDs
+        let voxel_data: Vec<([i32; 3], f64)> = self.voxels.iter()
+            .filter_map(|&entity| {
+                self.world.get::<Voxel>(entity)
+                    .map(|v| (v.position, v.energy))
+            })
+            .collect();
+        
+        let max_energy = voxel_data.iter()
+            .map(|(_, energy)| *energy)
             .fold(0.0, f64::max);
         
-        for voxel in query.iter(&self.world) {
+        for (position, energy) in voxel_data {
             let pos = [
-                voxel.position[0] as f32,
-                voxel.position[1] as f32,
-                voxel.position[2] as f32,
+                position[0] as f32,
+                position[1] as f32,
+                position[2] as f32,
             ];
-            let color = voxel.get_energy_color(max_energy);
+            // Create temporary voxel for color calculation
+            let temp_voxel = Voxel {
+                energy,
+                ..Voxel::new([0, 0, 0])
+            };
+            let color = temp_voxel.get_energy_color(max_energy);
             points.push((pos, color));
         }
         
