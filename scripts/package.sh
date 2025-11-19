@@ -16,6 +16,9 @@ cp -r scripts "$TEMP_DIR/"
 cp Cargo.toml "$TEMP_DIR/"
 cp build.rs "$TEMP_DIR/"
 cp README.md "$TEMP_DIR/"
+cp ARCHITECTURE.md "$TEMP_DIR/" 2>/dev/null || true
+cp PROJECT_STRUCTURE.md "$TEMP_DIR/" 2>/dev/null || true
+cp QUICKSTART.md "$TEMP_DIR/" 2>/dev/null || true
 cp CHANGELOG.md "$TEMP_DIR/"
 cp LICENSE-MIT "$TEMP_DIR/"
 cp LICENSE-APACHE "$TEMP_DIR/"
