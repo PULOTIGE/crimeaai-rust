@@ -1,0 +1,18 @@
+{
+  "voxelcrai.config.title": "VoxelCrai Settings",
+  "voxelcrai.config.patternCount": "Pattern Count",
+  "voxelcrai.config.patternCount.tooltip": "Number of lighting patterns (1k-100k). More patterns = higher quality but more VRAM.",
+  "voxelcrai.config.shBands": "SH Bands",
+  "voxelcrai.config.shBands.tooltip": "Number of Spherical Harmonics bands (3-5). More bands = more accurate shadows.",
+  "voxelcrai.config.giIntensity": "GI Intensity",
+  "voxelcrai.config.giIntensity.tooltip": "Global Illumination intensity (0-200%)",
+  "voxelcrai.config.shadowIntensity": "Shadow Intensity",
+  "voxelcrai.config.shadowIntensity.tooltip": "Shadow darkness (0-200%)",
+  "voxelcrai.config.reflectionIntensity": "Reflection Intensity",
+  "voxelcrai.config.reflectionIntensity.tooltip": "Specular reflection strength (0-100%)",
+  "voxelcrai.config.save": "Save",
+  "voxelcrai.config.cancel": "Cancel",
+  "voxelcrai.config.reset": "Reset to Defaults",
+  "voxelcrai.hud.patternCount": "Patterns: %d",
+  "voxelcrai.hud.memory": "Memory: %.1f MB"
+}

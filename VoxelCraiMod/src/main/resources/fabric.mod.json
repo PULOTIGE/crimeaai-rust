@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "voxelcrai",
+  "version": "${version}",
+  "name": "VoxelCraiMod",
+  "description": "🚀 Воксельное освещение на основе Spherical Harmonics паттернов (LightPattern1KB). SH-based GI, тени и отражения без трассировки лучей - чистая математика паттернов для 60+ FPS на AMD Radeon VII.",
+  "authors": [
+    "VoxelCrai Team"
+  ],
+  "contact": {
+    "homepage": "https://github.com/voxelcrai/voxelcrai-mod",
+    "sources": "https://github.com/voxelcrai/voxelcrai-mod",
+    "issues": "https://github.com/voxelcrai/voxelcrai-mod/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/voxelcrai/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.voxelcrai.mod.VoxelCraiMod"
+    ]
+  },
+  "mixins": [
+    "voxelcrai.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "~${minecraft_version}",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "recommends": {
+    "iris": ">=1.7.0",
+    "sodium": ">=0.5.0"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/voxelcrai"
+      },
+      "badges": ["library"]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+This is a placeholder for the mod icon.
+
+To create the actual icon:
+1. Create a 128x128 PNG image
+2. Name it "icon.png"
+3. Place it in this directory (replacing this file)
+
+Recommended design:
+- Blue/cyan gradient background (#2563EB -> #06B6D4)
+- White "SH" letters or wave pattern representing Spherical Harmonics
+- Voxel/cube element

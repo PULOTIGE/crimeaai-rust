@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.voxelcrai.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "WorldRendererMixin",
+    "ChunkBuilderMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

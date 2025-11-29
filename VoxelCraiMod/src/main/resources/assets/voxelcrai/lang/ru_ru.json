@@ -1,0 +1,18 @@
+{
+  "voxelcrai.config.title": "🔮 VoxelCrai - Настройки",
+  "voxelcrai.config.patternCount": "Количество паттернов",
+  "voxelcrai.config.patternCount.tooltip": "Количество паттернов освещения (1k-100k). Больше = выше качество, но больше VRAM.",
+  "voxelcrai.config.shBands": "SH Bands",
+  "voxelcrai.config.shBands.tooltip": "Количество Spherical Harmonics bands (3-5). Больше = точнее тени.",
+  "voxelcrai.config.giIntensity": "Интенсивность GI",
+  "voxelcrai.config.giIntensity.tooltip": "Интенсивность глобального освещения (0-200%)",
+  "voxelcrai.config.shadowIntensity": "Интенсивность теней",
+  "voxelcrai.config.shadowIntensity.tooltip": "Темнота теней (0-200%)",
+  "voxelcrai.config.reflectionIntensity": "Интенсивность отражений",
+  "voxelcrai.config.reflectionIntensity.tooltip": "Сила зеркальных отражений (0-100%)",
+  "voxelcrai.config.save": "💾 Сохранить",
+  "voxelcrai.config.cancel": "❌ Отмена",
+  "voxelcrai.config.reset": "🔄 Сброс",
+  "voxelcrai.hud.patternCount": "Паттернов: %d",
+  "voxelcrai.hud.memory": "Память: %.1f МБ"
+}
