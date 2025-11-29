@@ -1,0 +1,40 @@
+# 🚀 VoxelCraiMod .gitignore
+
+# Gradle
+.gradle/
+build/
+out/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.code-workspace
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Minecraft
+run/
+logs/
+crash-reports/
+*.log
+
+# Fabric
+remappedSrc/
+
+# Misc
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
