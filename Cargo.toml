@@ -1,0 +1,45 @@
+[package]
+name = "crimeaai"
+version = "1.0.0"
+edition = "2021"
+authors = ["CrimeaAI Team"]
+description = "🧠 AI Ecosystem with biological data structures, emotional model and concept search"
+license = "MIT"
+readme = "README.md"
+
+[dependencies]
+# Parallel processing (for Xeon's 36 threads!)
+rayon = "1.10"
+
+# Random numbers
+rand = "0.8"
+rand_distr = "0.4"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+bincode = "1.3"
+
+# Time
+chrono = "0.4"
+
+# Logging
+log = "0.4"
+env_logger = "0.11"
+
+# Fast mutex
+parking_lot = "0.12"
+
+# Terminal UI
+crossterm = "0.27"
+ratatui = "0.26"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.dev]
+opt-level = 1
