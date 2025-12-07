@@ -166,15 +166,39 @@ impl ChatUI {
         
         match self.file_processor.read_file(&path) {
             Ok(content) => {
+                if content.trim().is_empty() {
+                    self.messages.push(ChatMessage {
+                        text: format!("⚠️ Файл пустой!\n\n📁 Файл: {:?}\n\n💡 Убедитесь, что файл содержит текст.", 
+                            path.file_name().unwrap_or_default()
+                        ),
+                        is_user: false,
+                        timestamp: Self::get_timestamp(),
+                    });
+                    return;
+                }
+                
                 self.file_stats = Some(self.file_processor.get_file_stats(&content));
                 self.loaded_files.push((path.clone(), content.clone()));
                 
                 let training_examples = self.file_processor.extract_training_data(&content);
                 let examples_count = training_examples.len();
+                
+                if training_examples.is_empty() {
+                    self.messages.push(ChatMessage {
+                        text: format!("⚠️ Не удалось извлечь данные для обучения!\n\n📁 Файл: {:?}\n{}\n\n💡 Файл загружен, но текст слишком короткий.\nДобавьте больше содержимого (минимум 5 символов).", 
+                            path.file_name().unwrap_or_default(),
+                            self.file_stats.as_ref().unwrap().format()
+                        ),
+                        is_user: false,
+                        timestamp: Self::get_timestamp(),
+                    });
+                    return;
+                }
+                
                 self.training_data.extend(training_examples);
                 
                 self.messages.push(ChatMessage {
-                    text: format!("✓ Файл успешно загружен!\n\n📁 Файл: {:?}\n{}\n📊 Извлечено примеров: {}", 
+                    text: format!("✅ Файл успешно загружен!\n\n📁 Файл: {:?}\n{}\n📊 Извлечено примеров: {}\n\n💡 Теперь нажмите \"Начать обучение\"!", 
                         path.file_name().unwrap_or_default(),
                         self.file_stats.as_ref().unwrap().format(),
                         examples_count
@@ -187,7 +211,7 @@ impl ChatUI {
             }
             Err(e) => {
                 self.messages.push(ChatMessage {
-                    text: format!("✗ Ошибка загрузки: {}", e),
+                    text: format!("❌ Ошибка загрузки файла!\n\n{}\n\n💡 Проверьте:\n• Путь к файлу правильный?\n• Файл существует?\n• Формат поддерживается?", e),
                     is_user: false,
                     timestamp: Self::get_timestamp(),
                 });

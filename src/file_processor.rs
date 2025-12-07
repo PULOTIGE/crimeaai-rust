@@ -175,20 +175,25 @@ impl FileProcessor {
         // Разбивка по абзацам
         for paragraph in content.split("\n\n") {
             let trimmed = paragraph.trim();
-            if !trimmed.is_empty() && trimmed.len() > 10 {
+            if !trimmed.is_empty() && trimmed.len() > 3 {  // Уменьшили с 10 до 3
                 examples.push(trimmed.to_string());
             }
         }
         
         // Если абзацев мало, разбиваем по предложениям
-        if examples.len() < 5 {
+        if examples.len() < 3 {  // Уменьшили с 5 до 3
             examples.clear();
             for sentence in content.split(&['.', '!', '?', '\n'][..]) {
                 let trimmed = sentence.trim();
-                if !trimmed.is_empty() && trimmed.len() > 10 {
+                if !trimmed.is_empty() && trimmed.len() > 3 {  // Уменьшили с 10 до 3
                     examples.push(trimmed.to_string());
                 }
             }
+        }
+        
+        // Если всё ещё мало, берём весь текст целиком
+        if examples.is_empty() && !content.trim().is_empty() {
+            examples.push(content.trim().to_string());
         }
         
         examples
@@ -209,19 +214,23 @@ impl FileProcessor {
         }
     }
     
-    /// Валидация данных для обучения
+    /// Валидация данных для обучения (упрощённая)
     pub fn validate_training_data(&self, data: &[String]) -> Result<(), String> {
         if data.is_empty() {
-            return Err("Нет данных для обучения".to_string());
+            return Err("Нет данных для обучения. Файл пустой или не содержит текста.".to_string());
         }
         
-        if data.len() < 3 {
-            return Err("Слишком мало примеров для обучения (минимум 3)".to_string());
-        }
+        // Убрали проверку минимума примеров - даже 1 пример это ок!
         
-        let avg_length: usize = data.iter().map(|s| s.len()).sum::<usize>() / data.len();
-        if avg_length < 10 {
-            return Err("Примеры слишком короткие (минимум 10 символов)".to_string());
+        // Проверяем, что хотя бы один пример имеет приличную длину
+        let has_decent_example = data.iter().any(|s| s.len() > 5);
+        if !has_decent_example {
+            return Err(format!(
+                "Все примеры слишком короткие.\n\
+                 📊 Найдено примеров: {}\n\
+                 💡 Добавьте больше текста в файл (минимум 5 символов на пример)",
+                data.len()
+            ));
         }
         
         Ok(())
