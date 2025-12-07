@@ -1,13 +1,9 @@
 use crate::ai_model::AIModel;
 use crate::file_processor::{FileProcessor, FileStats};
-use crate::voxel::VoxelWorld;
-use crate::evolution::EvolutionEngine;
-use crate::system_monitor::SystemMonitor;
 use eframe::egui;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::thread;
-use std::time::Instant;
 
 /// Режим работы приложения
 #[derive(Debug, Clone, Copy, PartialEq)]
