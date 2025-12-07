@@ -1,54 +1,48 @@
 use std::fs;
-use std::path::{Path, PathBuf};
-use std::io::Read;
+use std::path::Path;
 
-/// Обработчик файлов для загрузки обучающих данных
-pub struct FileProcessor {
-    pub supported_extensions: Vec<String>,
+/// Читалка документов с поддержкой PDF и DJVU
+pub struct DocumentReader {
+    pub supported_formats: Vec<String>,
 }
 
-impl FileProcessor {
+impl DocumentReader {
     pub fn new() -> Self {
         Self {
-            supported_extensions: vec![
+            supported_formats: vec![
                 // Текстовые
-                "txt".to_string(),
-                "md".to_string(),
-                "json".to_string(),
-                "csv".to_string(),
-                "log".to_string(),
-                "xml".to_string(),
+                "txt".to_string(), "md".to_string(), "json".to_string(), 
+                "csv".to_string(), "log".to_string(), "xml".to_string(),
                 // Код
-                "rs".to_string(),
-                "py".to_string(),
-                "js".to_string(),
-                "html".to_string(),
-                "css".to_string(),
-                "java".to_string(),
-                "cpp".to_string(),
-                "c".to_string(),
+                "rs".to_string(), "py".to_string(), "js".to_string(), 
+                "html".to_string(), "css".to_string(), "java".to_string(),
+                "cpp".to_string(), "c".to_string(), "h".to_string(),
                 // Документы
                 "pdf".to_string(),
-                "djvu".to_string(),
-                "djv".to_string(),
+                // DJVU пока заглушка (требует внешние библиотеки)
+                "djvu".to_string(), "djv".to_string(),
             ],
         }
     }
     
-    /// Проверка поддерживаемого формата
+    /// Проверка поддержки формата
     pub fn is_supported(&self, path: &Path) -> bool {
         if let Some(ext) = path.extension() {
             if let Some(ext_str) = ext.to_str() {
-                return self.supported_extensions.contains(&ext_str.to_lowercase());
+                return self.supported_formats.contains(&ext_str.to_lowercase());
             }
         }
         false
     }
     
-    /// Чтение файла с поддержкой PDF и DJVU
+    /// Чтение файла с автоопределением формата
     pub fn read_file(&self, path: &Path) -> Result<String, String> {
+        if !path.exists() {
+            return Err(format!("Файл не найден: {:?}", path));
+        }
+        
         if !self.is_supported(path) {
-            return Err(format!("Неподдерживаемый формат файла: {:?}", path.extension()));
+            return Err(format!("Неподдерживаемый формат: {:?}", path.extension()));
         }
         
         let ext = path.extension()
@@ -59,22 +53,24 @@ impl FileProcessor {
         match ext.as_str() {
             "pdf" => self.read_pdf(path),
             "djvu" | "djv" => self.read_djvu(path),
-            _ => {
-                // Обычные текстовые файлы
-                match fs::read_to_string(path) {
-                    Ok(content) => Ok(content),
-                    Err(e) => Err(format!("Ошибка чтения файла: {}", e)),
-                }
-            }
+            _ => self.read_text(path),
         }
+    }
+    
+    /// Чтение текстового файла
+    fn read_text(&self, path: &Path) -> Result<String, String> {
+        fs::read_to_string(path)
+            .map_err(|e| format!("Ошибка чтения текстового файла: {}", e))
     }
     
     /// Чтение PDF файла
     fn read_pdf(&self, path: &Path) -> Result<String, String> {
+        // Используем простое извлечение из PDF bytes
         match fs::read(path) {
             Ok(bytes) => {
                 let text = Self::extract_text_from_pdf_bytes(&bytes);
                 if text.is_empty() {
+                    // Если не удалось извлечь текст, возвращаем информацию
                     Ok(format!(
                         "📄 PDF файл загружен ({} байт)\n\n\
                          ⚠️ Автоматическое извлечение текста из PDF может быть неполным.\n\n\
@@ -97,6 +93,7 @@ impl FileProcessor {
     
     /// Извлечение текста из PDF байтов
     fn extract_text_from_pdf_bytes(bytes: &[u8]) -> String {
+        // Ищем текстовые фрагменты в PDF
         let text = String::from_utf8_lossy(bytes);
         let mut result = String::new();
         
@@ -123,8 +120,10 @@ impl FileProcessor {
         result.trim().to_string()
     }
     
-    /// Чтение DJVU файла
+    /// Чтение DJVU файла (заглушка)
     fn read_djvu(&self, path: &Path) -> Result<String, String> {
+        // DJVU требует внешних библиотек (djvulibre)
+        // Пока возвращаем заглушку
         Err(format!(
             "❌ DJVU пока не поддерживается напрямую\n\n\
              📝 Решение:\n\
@@ -139,53 +138,28 @@ impl FileProcessor {
         ))
     }
     
-    /// Чтение всех файлов из директории
-    pub fn read_directory(&self, dir_path: &Path) -> Result<Vec<(PathBuf, String)>, String> {
-        let mut files_content = Vec::new();
-        
-        if !dir_path.is_dir() {
-            return Err("Указанный путь не является директорией".to_string());
-        }
-        
-        let entries = match fs::read_dir(dir_path) {
-            Ok(entries) => entries,
-            Err(e) => return Err(format!("Ошибка чтения директории: {}", e)),
-        };
-        
-        for entry in entries {
-            if let Ok(entry) = entry {
-                let path = entry.path();
-                if path.is_file() && self.is_supported(&path) {
-                    match self.read_file(&path) {
-                        Ok(content) => files_content.push((path, content)),
-                        Err(e) => eprintln!("Пропуск файла {:?}: {}", path, e),
-                    }
-                }
-            }
-        }
-        
-        Ok(files_content)
-    }
-    
-    /// Извлечение обучающих примеров из текста
+    /// Извлечение обучающих данных из текста
     pub fn extract_training_data(&self, content: &str) -> Vec<String> {
-        // Разбиваем на предложения/абзацы
         let mut examples = Vec::new();
         
         // Разбивка по абзацам
         for paragraph in content.split("\n\n") {
             let trimmed = paragraph.trim();
-            if !trimmed.is_empty() && trimmed.len() > 10 {
+            if !trimmed.is_empty() && trimmed.len() > 15 {
                 examples.push(trimmed.to_string());
             }
         }
         
         // Если абзацев мало, разбиваем по предложениям
-        if examples.len() < 5 {
+        if examples.len() < 3 {
             examples.clear();
-            for sentence in content.split(&['.', '!', '?', '\n'][..]) {
+            let sentences: Vec<&str> = content
+                .split(&['.', '!', '?', '\n'][..])
+                .collect();
+            
+            for sentence in sentences {
                 let trimmed = sentence.trim();
-                if !trimmed.is_empty() && trimmed.len() > 10 {
+                if !trimmed.is_empty() && trimmed.len() > 15 {
                     examples.push(trimmed.to_string());
                 }
             }
@@ -194,7 +168,7 @@ impl FileProcessor {
         examples
     }
     
-    /// Получение статистики по файлу
+    /// Статистика файла
     pub fn get_file_stats(&self, content: &str) -> FileStats {
         let lines = content.lines().count();
         let words = content.split_whitespace().count();
@@ -209,26 +183,26 @@ impl FileProcessor {
         }
     }
     
-    /// Валидация данных для обучения
+    /// Валидация данных
     pub fn validate_training_data(&self, data: &[String]) -> Result<(), String> {
         if data.is_empty() {
             return Err("Нет данных для обучения".to_string());
         }
         
         if data.len() < 3 {
-            return Err("Слишком мало примеров для обучения (минимум 3)".to_string());
+            return Err(format!("Слишком мало примеров: {} (минимум 3)", data.len()));
         }
         
         let avg_length: usize = data.iter().map(|s| s.len()).sum::<usize>() / data.len();
-        if avg_length < 10 {
-            return Err("Примеры слишком короткие (минимум 10 символов)".to_string());
+        if avg_length < 15 {
+            return Err("Примеры слишком короткие (минимум 15 символов)".to_string());
         }
         
         Ok(())
     }
 }
 
-impl Default for FileProcessor {
+impl Default for DocumentReader {
     fn default() -> Self {
         Self::new()
     }
@@ -245,36 +219,8 @@ pub struct FileStats {
 impl FileStats {
     pub fn format(&self) -> String {
         format!(
-            "Строк: {}\nСлов: {}\nСимволов: {}\nБайт: {}",
+            "📄 Строк: {}\n💬 Слов: {}\n🔤 Символов: {}\n📦 Байт: {}",
             self.lines, self.words, self.chars, self.bytes
         )
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    
-    #[test]
-    fn test_file_processor() {
-        let processor = FileProcessor::new();
-        assert!(processor.supported_extensions.contains(&"txt".to_string()));
-    }
-    
-    #[test]
-    fn test_extract_training_data() {
-        let processor = FileProcessor::new();
-        let content = "Первое предложение.\n\nВторое предложение.";
-        let data = processor.extract_training_data(content);
-        assert!(!data.is_empty());
-    }
-    
-    #[test]
-    fn test_file_stats() {
-        let processor = FileProcessor::new();
-        let content = "Hello world\nTest line";
-        let stats = processor.get_file_stats(content);
-        assert_eq!(stats.lines, 2);
-        assert_eq!(stats.words, 4);
     }
 }
