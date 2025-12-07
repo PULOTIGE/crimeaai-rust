@@ -1,0 +1,65 @@
+Hello! How are you?
+Hello! I'm doing well, thank you. How about you?
+
+What can you do?
+I can answer questions, maintain conversations, and learn from new data.
+
+Tell me about Rust.
+Rust is a modern programming language that ensures memory safety without garbage collection. It's perfect for systems programming.
+
+How does a neural network work?
+A neural network consists of layers of neurons that process input data and pass results to the next layer. Training occurs by adjusting the weights of connections between neurons.
+
+What is machine learning?
+Machine learning is a branch of artificial intelligence that allows computers to learn from data without explicitly programming every step.
+
+How can I train you on my data?
+Switch to "Training" mode, upload your text files, set the number of epochs, and click "Start Training".
+
+What file formats do you support?
+I support: txt, md, json, csv, log, rs, py, js, html, xml and other text formats.
+
+What is fp64?
+FP64 (64-bit floating point) is a double precision floating-point number format that provides high accuracy in neural network training computations.
+
+Why is high precision needed for training?
+High precision (fp64) helps avoid gradient problems and ensures more stable training, especially for large and complex models.
+
+How do you work?
+I use a simple neural network with multiple layers that learns to predict the next word based on the context of previous words.
+
+Can you be trained on a specific domain?
+Yes, of course! Upload text data from your knowledge domain, and I will adapt to your terminology and communication style.
+
+How long does training take?
+Training time depends on the amount of data and epochs. Usually 100 examples over 10 epochs train in 10-30 seconds.
+
+What is a training epoch?
+An epoch is one complete pass through all training data. More epochs can improve model quality but increase training time.
+
+How to evaluate training quality?
+After training, check the quality of the model's responses to real questions. If responses are unsatisfactory, load more data or increase epochs.
+
+Can the trained model be saved?
+Yes, there are save() and load() functions in the code. You can add buttons to the interface for this.
+
+What is tokenization?
+Tokenization is the process of breaking text into individual words or tokens that the model can process.
+
+How does text generation work?
+The model takes the last few words as context, predicts the probabilities of the next word, and selects the most appropriate one.
+
+Why are responses sometimes strange?
+The model may give unusual responses if there isn't enough training data. Train it on more quality examples.
+
+How to improve response quality?
+Load more diverse training data, increase the number of epochs, use quality and clean texts.
+
+Can it be used in Russian and English?
+Yes, the model supports both languages and can train on mixed data.
+
+What to do if the model doesn't respond?
+If the model doesn't give a response or the response is empty, it means there's insufficient training data. Train it on your texts.
+
+Thank you for your help!
+You're welcome! Happy to help. Feel free to ask if you have questions.

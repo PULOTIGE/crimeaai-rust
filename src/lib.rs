@@ -1,17 +1,10 @@
-// Adaptive Entity Engine v1.0 Library
+// AI Chat Application Library
 
-pub mod archguard;
-pub mod ecs;
-pub mod evolution;
-pub mod lighting;
-#[cfg(feature = "gui")]
-pub mod renderer;
-#[cfg(feature = "gui")]
-pub mod ui;
-pub mod voxel;
+pub mod ai_model;
+pub mod file_processor;
+pub mod chat_ui;
 
 // Re-export main types
-pub use archguard::ArchGuard;
-pub use evolution::EvolutionEngine;
-pub use lighting::{LightPattern, LightingSystem};
-pub use voxel::{Voxel, VoxelWorld, Genome};
+pub use ai_model::AIModel;
+pub use file_processor::{FileProcessor, FileStats};
+pub use chat_ui::{ChatUI, ChatMessage, AppMode, TrainingStatus};
